@@ -1,5 +1,6 @@
 class Subjects:
-    def __init__(self, marks):
+    def __init__(self, name, marks):
+        self.name = name
         self.marks = marks
 
 
@@ -19,8 +20,12 @@ def load_data():
             tot_marks.append(marks)
             names.append(name)
 
-    return names, tot_marks
+    for subject in names:
+        subject = Subjects(subject, tot_marks[names.index(subject)])
+        subjects.append(subject)
+
+    return subjects
 
 if __name__ == '__main__':
-    names, marks = load_data()
-    print(names, marks)
+    subjects = load_data()
+    print(subjects[0].name, subjects[0].marks)
