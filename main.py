@@ -25,7 +25,6 @@ def load_data():
 
             for mark in marks:
                 mark = mark.split(":")
-                print(mark)
                 ex_names.append(mark[0])
                 ex_marks.append(int(mark[1]))
 
@@ -36,10 +35,21 @@ def load_data():
     return subjects
 
 
-def run(subjects):
-    pass
+def setup(subjects):
+    with open("text.txt") as text:
+        print(text.read())
+
+    for subject in subjects:
+        print(subject.name + " :")
+        for name in subject.ex_names:
+            distance = 20-len(name.replace("\\", "").replace(" ", ""))
+            print(name.replace("\\", "").replace(" ", "") + ":" + " "*distance + str(subject.ex_marks[subject.ex_names.index(name)]))
+
+        print("\nAverage:" + " " * 13 + str(subject.average))
+        print("\n\n")
+
 
 
 if __name__ == '__main__':
     subjects = load_data()
-    run(subjects)
+    setup(subjects)
