@@ -25,6 +25,8 @@ def load_data():
         subjects.append(subject)
 
     return subjects
+def do_nothing():
+    pass
 
 if __name__ == '__main__':
     subjects = load_data()
