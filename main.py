@@ -86,7 +86,6 @@ def setup(subjects):
 
 def add(subjects, command):
     type = ""
-    subject = ""
     ex_name = []
     ex_mark = []
     if command == "add":
@@ -128,29 +127,104 @@ def add(subjects, command):
             subjects[sub_index].ex_names.append(exam_name)
             subjects[sub_index].ex_marks.append(exam_mark)
 
+    return subjects
 
+def delete(subjects, command):
+    type = ""
+    sub_name = ""
+    mark_name = ""
+    command = command.split()
 
+    if len(command) == 3:
+        type = command[1]
+        sub_name = command[2]
+        if type.lower() != "subject":
+            print("pleas use valid syntax")
+            return subjects
 
+    elif len(command) == 4:
+        type = command[1]
+        sub_name = command[2]
+        mark_name = command[3]
+        if type.lower() != "mark":
+            print("pleas use valid syntax")
+            return subjects
+
+    print(type, mark_name, sub_name)
+    if type == "":
+        print("please use remove + type + subject + mark to delete a mark")
+        return subjects
+
+    if type.lower() == "mark":
+        subject_index = 69420
+        mark_index = 69420
+        for subject in subjects:
+            if sub_name.lower() == subject.name:
+                subject_index = subjects.index(subject)
+
+        if subject_index == 69420:
+            print("please select a valid subject")
+            return subjects
+
+        for element in subjects[subject_index].ex_names:
+            if element.lower().strip("\\").strip() == mark_name.lower().strip():
+                mark_index = subjects[subject_index].ex_names.index(element)
+
+        if mark_index == 69420:
+            print("please select a valid mark")
+            return subjects
+
+        if input(f"do you want to remove {mark_name} from {sub_name}? (y/n)").lower() == "y":
+            subjects[subject_index].ex_names.pop(mark_index)
+            subjects[subject_index].ex_marks.pop(mark_index)
+        else:
+            return subjects
+
+    elif type == "subject":
+        subject_index = 69420
+        for subject in subjects:
+            if sub_name.lower() == subject.name.lower():
+                subject_index = subjects.index(subject)
+
+        if subject_index == 69420:
+            print("please select a valid subject")
+            return subjects
+        if input(f"do you want do delte {sub_name}? (y/n)").lower() == "y":
+            subjects.pop(subject_index)
+        else:
+            return subjects
+
+    else:
+        print("this should not happen, lol0")
+        return subjects
 
     return subjects
+
+
+
 def run(subjects):
     while True:
         command = input("What action do you want to perform?    ")
         if "help" in command:
             with open("commands.txt") as file:
                 print(file.read)
+
         elif "change" in command:
             subjects = change_mark(subjects)
+
         elif "main" in command:
             setup(subjects)
+
         elif "add" in command:
-            add(subjects,command)
+            subjects = add(subjects,command)
+
+        elif "remove" in command:
+            subjects = delete(subjects, command)
 
         elif command == "exit":
             break
         else:
             print("Use the Help command to see a list of commands")
-
         for subject in subjects:
             subject.update()
 

@@ -1,3 +1,3 @@
-Math\ Exam 1:5.0,exam 2:5.0,doodly:4.0,bla:5.75
-english\ Ex1:3.0,sdfs:12.0, aesdd:5.0,ex3:12.0,ex:4.0
-doodly\dssd :3.0,newmark :4.3, test :55.0
+math\Logarhytmen :4.2
+history\paper :4.8
+german\Schilderung :5.5
