@@ -3,7 +3,10 @@ class Subjects:
         self.name = name
         self.ex_marks = ex_marks
         self.ex_names = ex_names
-        self.average = sum(ex_marks) / len(ex_marks)
+        self.average = sum(ex_marks)/len(ex_marks)
+
+    def update(self):
+        self.average = sum(self.ex_marks)/len(self.ex_marks)
 
 
 def load_data():
@@ -25,7 +28,7 @@ def load_data():
             for mark in marks:
                 mark = mark.split(":")
                 ex_names.append(mark[0])
-                ex_marks.append(int(mark[1]))
+                ex_marks.append(float(mark[1]))
 
             name = Subjects(name, ex_names, ex_marks)
             subjects.append(name)
@@ -81,7 +84,55 @@ def setup(subjects):
         print("\nAverage:" + " " * 13 + str(subject.average))
         print("\n\n")
 
+def add(subjects, command):
+    type = ""
+    subject = ""
+    ex_name = []
+    ex_mark = []
+    if command == "add":
+        ask_type = input("would you like to add a subject or mark?")
+        if "mark" in ask_type:
+            type = "mark"
+        elif "subj" in ask_type:
+            type = "subject"
 
+    elif "add" in command:
+
+        if "mark" in command:
+            type = "mark"
+        elif "subj" in command:
+            type = "subject"
+        else:
+            print("please select a valid type")
+            type = "invalid"
+
+    if type == "subject":
+        name = input("how would you like to call the subject?") + "\\"
+        exam = input("add an exam to the subject (seperate name and mark with \":\")")
+        ex_name.append(exam.split(":")[0])
+        ex_mark.append(float(exam.split(":")[1]))
+        name = Subjects(name, ex_name, ex_mark)
+        subjects.append(name)
+
+    elif type == "mark":
+        sub_index = 69420
+        subject = input("add a mark to what subject? ")
+        for sub in subjects:
+            if subject.lower() == sub.name:
+                sub_index = subjects.index(sub)
+
+        if sub_index != 69420:
+            exam_data = input("add an exam to the subject (seperate name and mark with \":\")")
+            exam_name = exam_data.split(":")[0]
+            exam_mark = float(exam_data.split(":")[1])
+            subjects[sub_index].ex_names.append(exam_name)
+            subjects[sub_index].ex_marks.append(exam_mark)
+
+
+
+
+
+    return subjects
 def run(subjects):
     while True:
         command = input("What action do you want to perform?    ")
@@ -90,11 +141,19 @@ def run(subjects):
                 print(file.read)
         elif "change" in command:
             subjects = change_mark(subjects)
+        elif "main" in command:
             setup(subjects)
+        elif "add" in command:
+            add(subjects,command)
+
         elif command == "exit":
             break
         else:
             print("Use the Help command to see a list of commands")
+
+        for subject in subjects:
+            subject.update()
+
     return subjects
 def safe_changes(subjects):
     content = ""
