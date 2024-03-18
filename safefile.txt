@@ -1,3 +1,5 @@
-math\Logarhytmen :4.2
-history\paper :4.8
-german\Schilderung :5.5
+math\Logarhytmen :4.2:2
+history\paper :4.8:2
+german\Schild. :5.5:2
+french\probetest subjonctif :2.3:1
+chemistry\labor 1 :6.0:2

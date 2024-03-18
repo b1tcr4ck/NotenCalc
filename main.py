@@ -1,12 +1,29 @@
+import os
+from colorama import Fore
+
 class Subjects:
-    def __init__(self, name, ex_names, ex_marks):
+    def __init__(self, name, ex_names, ex_marks, weight):
         self.name = name
         self.ex_marks = ex_marks
         self.ex_names = ex_names
-        self.average = sum(ex_marks)/len(ex_marks)
+        self.weight = weight
+        average = []
+        for mark in ex_marks:
+            for i in range(int(weight[ex_marks.index(mark)])):
+                average.append(mark)
+        print(average)
+        self.average = sum(average)/len(average)
 
     def update(self):
-        self.average = sum(self.ex_marks)/len(self.ex_marks)
+        average = []
+        for mark in self.ex_marks:
+            if int(self.weight[self.ex_marks.index(mark)]) != 1:
+                for i in range(int(self.weight[self.ex_marks.index(mark)])):
+                    average.append(mark)
+            else:
+                average.append(mark)
+
+        self.average = sum(average) / len(average)
 
 
 def load_data():
@@ -19,6 +36,7 @@ def load_data():
 
             ex_names = []
             ex_marks = []
+            ex_weight = []
 
             name = line[:line.index("\\")]
             marks = line[line.index("\\"):-1]
@@ -29,8 +47,9 @@ def load_data():
                 mark = mark.split(":")
                 ex_names.append(mark[0])
                 ex_marks.append(float(mark[1]))
+                ex_weight.append(int(mark[2]))
 
-            name = Subjects(name, ex_names, ex_marks)
+            name = Subjects(name, ex_names, ex_marks, ex_weight)
             subjects.append(name)
 
     return subjects
@@ -71,23 +90,26 @@ def change_mark(subjects):
     return subjects
 
 def setup(subjects):
+    os.system('cls')
     with open("text.txt") as text:
-        print(text.read())
+        print(Fore.LIGHTMAGENTA_EX + text.read())
 
     for subject in subjects:
         print(subject.name + " :")
         for name in subject.ex_names:
-            distance = 20 - len(name.replace("\\", "").replace(" ", ""))
-            print(name.replace("\\", "").replace(" ", "") + ":" + " " * distance + str(
-                subject.ex_marks[subject.ex_names.index(name)]))
+            distance = 30 - len(name.replace("\\", "").replace(" ", ""))
+            print(name.replace("\\", "").replace(" ", "") + ":" + " " * distance +
+                  str(subject.ex_marks[subject.ex_names.index(name)]) + " "*5 +
+                  str(subject.weight[subject.ex_names.index(name)]))
 
-        print("\nAverage:" + " " * 13 + str(subject.average))
+        print("\nAverage:" + " " * 23 + str(subject.average))
         print("\n\n")
 
 def add(subjects, command):
     type = ""
     ex_name = []
     ex_mark = []
+    weight = []
     if command == "add":
         ask_type = input("would you like to add a subject or mark?")
         if "mark" in ask_type:
@@ -107,10 +129,11 @@ def add(subjects, command):
 
     if type == "subject":
         name = input("how would you like to call the subject?") + "\\"
-        exam = input("add an exam to the subject (seperate name and mark with \":\")")
+        exam = input("add an exam to the subject (seperate name, mark and weight with \":\")")
         ex_name.append(exam.split(":")[0])
         ex_mark.append(float(exam.split(":")[1]))
-        name = Subjects(name, ex_name, ex_mark)
+        weight.append(int(exam.split(":")[2]))
+        name = Subjects(name, ex_name, ex_mark, weight)
         subjects.append(name)
 
     elif type == "mark":
@@ -121,11 +144,13 @@ def add(subjects, command):
                 sub_index = subjects.index(sub)
 
         if sub_index != 69420:
-            exam_data = input("add an exam to the subject (seperate name and mark with \":\")")
+            exam_data = input("add an exam to the subject (seperate name, mark and weight with \":\")")
             exam_name = exam_data.split(":")[0]
             exam_mark = float(exam_data.split(":")[1])
+            weight = int(exam_data.split(":")[2])
             subjects[sub_index].ex_names.append(exam_name)
             subjects[sub_index].ex_marks.append(exam_mark)
+            subjects[sub_index].weight.append(weight)
 
     return subjects
 
@@ -139,7 +164,7 @@ def delete(subjects, command):
         type = command[1]
         sub_name = command[2]
         if type.lower() != "subject":
-            print("pleas use valid syntax")
+            print("please use valid syntax")
             return subjects
 
     elif len(command) == 4:
@@ -147,10 +172,9 @@ def delete(subjects, command):
         sub_name = command[2]
         mark_name = command[3]
         if type.lower() != "mark":
-            print("pleas use valid syntax")
+            print("please use valid syntax")
             return subjects
 
-    print(type, mark_name, sub_name)
     if type == "":
         print("please use remove + type + subject + mark to delete a mark")
         return subjects
@@ -177,6 +201,7 @@ def delete(subjects, command):
         if input(f"do you want to remove {mark_name} from {sub_name}? (y/n)").lower() == "y":
             subjects[subject_index].ex_names.pop(mark_index)
             subjects[subject_index].ex_marks.pop(mark_index)
+            subjects[subject_index].weight.pop(mark_index)
         else:
             return subjects
 
@@ -211,15 +236,20 @@ def run(subjects):
 
         elif "change" in command:
             subjects = change_mark(subjects)
+            setup(subjects)
+
 
         elif "main" in command:
             setup(subjects)
 
         elif "add" in command:
             subjects = add(subjects,command)
+            setup(subjects)
+
 
         elif "remove" in command:
             subjects = delete(subjects, command)
+            setup(subjects)
 
         elif command == "exit":
             break
@@ -234,7 +264,9 @@ def safe_changes(subjects):
     for subject in subjects:
         content += subject.name
         for exam in subject.ex_names:
-            content += subject.ex_names[subject.ex_names.index(exam)] + ":" + str(subject.ex_marks[subject.ex_names.index(exam)])
+            content += (subject.ex_names[subject.ex_names.index(exam)] + ":" +
+                        str(subject.ex_marks[subject.ex_names.index(exam)]) + ":" +
+                        str(int(subject.weight[subject.ex_names.index(exam)]))).strip("]").strip("[")
             if subject.ex_names.index(exam) < len(subject.ex_names)-1:
                 content += ","
         content += "\n"
